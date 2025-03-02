@@ -20,13 +20,6 @@ SendBlocksInv(n, b) ==
     /\ messages' = messages \union {[type |-> "inv", from |-> n, data |-> b]}
     /\ UNCHANGED<<knownHeaders, knownBlocks, knownTransactions>>
 
-(* Node n sends an inventory of a header to peers
-   We send a single header in the inventory message for now *)
-SendHeadersInv(n, h) ==
-    /\ h \in Headers
-    /\ messages' = messages \union {[type |-> "inv", from |-> n, data |-> h]}
-    /\ UNCHANGED<<knownHeaders, knownBlocks, knownTransactions>>
-
 (* Node n sends an inventory of a transaction to peers
    We send a single transaction in the inventory message for now *)
 SendTxInv(n, tx) ==
@@ -36,7 +29,7 @@ SendTxInv(n, tx) ==
 
 RequestHeaders(m, n, h) ==
     /\ h \in Headers
-    /\ [type |-> "inv", from |-> m, data |-> h] \in messages
+    /\ h \notin knownHeaders[m]
     /\ messages' = messages \union {[type |-> "getheaders", from |-> m, to |-> n, data |-> h]}
     /\ UNCHANGED<<knownHeaders, knownBlocks, knownTransactions>>
 
@@ -99,7 +92,6 @@ ReceiveTx(m, n, tx) ==
 
 Next == 
     \/ \E n \in Nodes, b \in Blocks : SendBlocksInv(n, b)
-    \/ \E n \in Nodes, b \in Headers : SendHeadersInv(n, b)
     \/ \E m, n \in Nodes, b \in Blocks : RequestBlock(m, n,b)
     \/ \E m, n \in Nodes, b \in Blocks : SendBlock(m, n, b)
     \/ \E n \in Nodes, tx \in Transactions : RequestTx(n, tx)
