@@ -1,0 +1,21 @@
+= TLA+ Specifications for Bitcoin P2P Protocol
+
+The repo specifies the Bitcoin P2P protocol for syncing the chain.
+
+It helps bring clarity to how inv/getdata/headers/blocks/tx messages are exchanged between nodes to sync chain.
+
+We do not separate the protocol into Initial Block Download (IBD) and Normal Mode, because the network protocol
+does not make this distinction.
+
+To run the BitcoinP2P.tla spec, you have two options:
+
+. You can install the link:https://marketplace.visualstudio.com/items?itemName=alygin.vscode-tlaplus[VSCode TLA+ extension] and open the `BitcoinP2P.tla` module, and then run the command `TLA+: Check model with TLC` from the command palette.
+. You can install link:https://lamport.azurewebsites.net/tla/toolbox.html[TLA+ Toolbox] and open the `BitcoinP2P.tla` module.
+or run the command `tlc BitcoinP2P.tla` from the command line
+
+== Still to add
+
+. Add spec for sendheaders message
+. Add spec for compact blocks
+
+I haven't added these yet as I don't need them for p2pool network protocol.
