@@ -1,0 +1,53 @@
+== Bitcoin Chain TLA+ Model
+
+This is a TLA+ model of the Bitcoin blockchain. It is a simplified version of the actual Bitcoin protocol, focusing on the byzantine fault tolerant consensus using proof of work.
+
+Our goal here is to capture how a chain is built with blocks and the tip of the chain is always the chain with the most work.
+
+== Model Overview
+
+The model consists of the following components:
+
+* `Chain`: Represents the blockchain, which is a list of blocks.
+* `Block`: Represents a block in the blockchain, which contains a hash of the previous block, a nonce, a timestamp, and a list of transactions
+* `Node`: Represents a node in the network, which can create blocks and add them to the chain.
+* `Network`: Represents the network of nodes, which can send and receive blocks.
+
+
+Each Node maintains the following data structures:
+
+* `chain`: A DAG of block hashes that the node has. There can be multiple branches in the chain, but only once is considered the main chain. The `tip` identifies the main chain.
+* `tip`: The tip of the chain, w/hich is the last block in the chain.
+* `work`: The amount of work done on the chain, which is the sum of the work done on each block in the chain.
+* `blocks`: The blocks that the node has received from other nodes. Each block has a confirmed status, which indicates whether the block has been confirmed by the network or not. A block is confirmed if there is more than one block on top of it in the chain.
+
+Each node can generate blocks, adds it to the tip of the chain and broadcasts it to the network. The node can also receive blocks from other nodes and add them to its chain. If the received block is on a different branch than the current tip and the total work on that chain is larger than the current tip, then the node will switch to the new branch if it has more work than the current tip.
+
+
+== Model Properties
+
+The model captures the following properties:
+
+* The chain is a DAG of blocks, where each block has a hash of the previous block.
+* The tip of the chain is always the block with the most work.
+* The network is a fully connected network, where each node can send and receive blocks from any other node.
+* The nodes can create blocks and add them to the chain.
+* The nodes can receive blocks from other nodes and add them to their chain.
+* The nodes can switch to a different branch of the chain if it has more work than the current tip.
+* The nodes can confirm blocks if there is more than one block on top of it in the chain.
+* The nodes can create blocks with a nonce, which is used to prove that the block has been created with a certain amount of work.
+* The nodes can create blocks with a timestamp, which is used to prove that the block has been created at a certain time.
+
+== Model Actions
+
+The model defines the following actions:
+
+* `createBlock`: Creates a new block with a nonce and timestamp, adds it to the chain, and broadcasts it to the network.
+* `receiveBlock`: Receives a block from another node, adds it to the chain, and checks if it can switch to a different branch of the chain.
+* `confirmBlock`: Confirms a block if there is more than one block on top of it in the chain.
+* `switchBranch`: Switches to a different branch of the chain if it has more work than the current tip.
+* `addBlock`: Adds a block to the chain and updates the tip and work of the chain.
+* `updateTip`: Updates the tip of the chain to the block with the most work.
+* `updateWork`: Updates the work of the chain based on the blocks in the chain.
+* `updateConfirmed`: Updates the confirmed status of the blocks in the chain based on the blocks in the chain.
+
