@@ -84,16 +84,19 @@ ReceiveBlockWithPreviousKnown(n, block) ==
                      THEN block.id
                      ELSE tipsByNode[n]
         IN
+        \* Add the block to the local node's known blocks
         /\ blocksByNode' = [blocksByNode EXCEPT ![n] = @ \union {block}]
         \* Take the next block in the receieve queue
         /\ network' = [network EXCEPT ![n] = @ \ {block}]
+        \* Update the chain for the local node by adding a back ref to the previous block
         /\ chainsByNode' = [chainsByNode EXCEPT ![n] = updatedChain]
+        \* Update the work seen by the node up to the block
         /\ LET 
             newWorkMap == [b \in DOMAIN workByNode[n] \union {block.id} |->
                 IF b = block.id THEN newWork ELSE workByNode[n][b]]
             IN
                 workByNode' = [workByNode EXCEPT ![n] = newWorkMap]     
-        \* Confirm the block if it is a new tip
+        \* Confirm the previous tip if we have a new tip
         /\ IF newWork > workByNode[n][tipsByNode[n]] THEN 
                 /\ confirmedByNode' = [confirmedByNode EXCEPT ![n] = confirmedByNode[n] \union {tipsByNode[n]}]
               ELSE
@@ -106,9 +109,6 @@ ReceiveBlockWithPreviousKnown(n, block) ==
 Next ==
     \/ \E n \in Nodes: CreateBlock(n)
     \/ \E n \in Nodes: \E block \in network[n]: ReceiveBlockWithPreviousKnown(n, block)
-
-
-\* vars == <<blocksByNode, chainsByNode, tipsByNode, workByNode, confirmedByNode, network, nextBlockId>>
 
 \* Invariants
 TypeInvariant ==
